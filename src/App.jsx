@@ -51,7 +51,7 @@ const MODULES = [
     title: "Spectral-Spatial Fusion (SSF)",
     icon: <Zap className="w-5 h-5 text-cyan-400" />,
     desc: "Harmonizes frequency-domain amplitude modulation via rFFT with a spatial gating mechanism to explicitly elevate spectral coefficients synonymous with fine-grained, pathological micro-textures.",
-    imgSrc: "/fig2.jpg"
+    imgSrc: "/fig02_ssf.jpeg"
   },
   {
     id: "agr",
@@ -59,7 +59,7 @@ const MODULES = [
     title: "Anatomical Graph Reasoning (AGR)",
     icon: <Cpu className="w-5 h-5 text-indigo-400" />,
     desc: "A macro-micro design where a coarse token graph captures global context, and high-resolution anatomical anchors preserve micro-pathology evidence, routed via bidirectional cross-attention.",
-    imgSrc: "/fig3.jpg"
+    imgSrc: "/fig03_agr.jpeg"
   },
   {
     id: "padfr",
@@ -67,7 +67,7 @@ const MODULES = [
     title: "Differential Refinement (PA-DFR)",
     icon: <Activity className="w-5 h-5 text-purple-400" />,
     desc: "Leverages an internally predicted joint-interest map to gate differential responses, sharply emphasizing osteochondral borders crucial for JSN detection while suppressing non-informative edges.",
-    imgSrc: "/fig4.jpg"
+    imgSrc: "/fig04_dfr.jpeg"
   },
   {
     id: "coe",
@@ -75,7 +75,7 @@ const MODULES = [
     title: "Continuous Ordinal Evidential Head",
     icon: <Layers className="w-5 h-5 text-emerald-400" />,
     desc: "Maps the embedding to hyperparameters of a Normal-Inverse-Gamma (NIG) distribution. A pairwise ordinal ranking constraint rigorously enforces monotonicity across the predicted severity.",
-    imgSrc: "/fig5.jpg"
+    imgSrc: "/fig05_coe.jpeg"
   }
 ];
 
@@ -98,6 +98,21 @@ const TABLE_4_ABLATION = [
   { variant: "w/o Differential Refinement (DFR)", qwk: "0.8229 ± 0.0132", mse: "0.3950 ± 0.0136" },
   { variant: "w/o Continuous Ordinal Evidential (COE)", qwk: "0.8289 ± 0.0014", mse: "0.3908 ± 0.0113" },
 ];
+
+// 图像组件：带防报错和悬浮动效
+const ImageWithFallback = ({ src, alt, className }) => {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={`${className} transition-transform duration-700 group-hover:scale-[1.02]`}
+      onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%230a0a0a'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: ${src}]%3C/text%3E%3C/svg%3E`;
+      }}
+    />
+  );
+};
 
 // ==========================================
 // 组件渲染区
@@ -243,13 +258,11 @@ export default function AcademicProjectPage() {
 
           {/* 1. 主架构图 (Figure 1) */}
           <div className="mb-16">
-            <div className="w-full aspect-video md:aspect-[21/9] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden relative shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center">
-              {/* 真实图片渲染：架构图 */}
-              <img 
-                src="/fig1.jpg" 
+            <div className="w-full aspect-video md:aspect-[21/9] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden relative shadow-[0_0_40px_rgba(34,211,238,0.05)] flex flex-col items-center justify-center group hover:border-white/20 transition-all duration-500">
+              <ImageWithFallback 
+                src="/fig01_overview.jpeg" 
                 alt="Figure 1 Architectural Overview" 
-                className="w-full h-full object-contain p-4" 
-                onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%230a0a0a'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='14' text-anchor='middle' dominant-baseline='middle'%3E[Image Missing: /fig1.jpg]%3C/text%3E%3C/svg%3E" }}
+                className="w-full h-full object-contain p-4 md:p-8" 
               />
             </div>
             
@@ -263,10 +276,10 @@ export default function AcademicProjectPage() {
             {MODULES.map((mod, idx) => (
               <div key={idx} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all flex flex-col group">
                 <div className="flex justify-between items-start mb-6">
-                  <div className="p-2.5 bg-black/50 border border-white/5 rounded-lg">
+                  <div className="p-2.5 bg-black/50 border border-white/5 rounded-lg shadow-inner">
                     {mod.icon}
                   </div>
-                  <span className="text-xs font-mono font-bold text-zinc-600 group-hover:text-zinc-400 transition-colors">{mod.fig}</span>
+                  <span className="text-xs font-mono font-bold text-zinc-600 group-hover:text-cyan-500/50 transition-colors">{mod.fig}</span>
                 </div>
                 
                 <h4 className="text-xl font-serif text-white mb-3">{mod.title}</h4>
@@ -274,13 +287,12 @@ export default function AcademicProjectPage() {
                   {mod.desc}
                 </p>
 
-                {/* 真实图片渲染：各模块图 */}
-                <div className="w-full aspect-[16/9] bg-[#050505] rounded-xl border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
-                  <img 
+                {/* 真实模块图片 */}
+                <div className="w-full aspect-[16/9] bg-[#050505] rounded-xl border border-white/5 flex items-center justify-center relative overflow-hidden group-hover:border-white/10 transition-all">
+                  <ImageWithFallback 
                     src={mod.imgSrc} 
                     alt={mod.title} 
-                    className="w-full h-full object-contain p-2"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: ${mod.imgSrc}]%3C/text%3E%3C/svg%3E` }}
+                    className="w-full h-full object-contain p-2" 
                   />
                 </div>
               </div>
@@ -288,7 +300,7 @@ export default function AcademicProjectPage() {
           </div>
 
           {/* 损失函数与优化 */}
-          <div className="mt-12 p-8 rounded-2xl bg-black border border-white/5">
+          <div className="mt-12 p-8 rounded-2xl bg-black border border-white/5 shadow-2xl">
              <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                <div className="md:w-1/3">
                  <h3 className="text-lg font-bold text-white mb-2">Loss Formulation</h3>
@@ -316,10 +328,22 @@ export default function AcademicProjectPage() {
             <h3 className="text-3xl md:text-4xl font-serif text-white">Comprehensive Evaluation</h3>
           </div>
 
+          {/* ROC Analysis (Fig 8) */}
+          <div className="mb-16">
+            <h4 className="text-lg font-medium text-white mb-6 border-l-2 border-emerald-500 pl-3">Diagnostic Efficacy (ROC Analysis)</h4>
+            <div className="w-full aspect-video md:aspect-[21/9] bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 md:p-8 relative overflow-hidden group hover:border-white/20 transition-all shadow-xl">
+               <ImageWithFallback 
+                  src="/fig08_roc.jpeg" 
+                  alt="Figure 8 ROC Curves" 
+                  className="w-full h-full object-contain" 
+               />
+            </div>
+          </div>
+
           {/* Table 3: Main Results */}
           <div className="mb-16">
             <h4 className="text-lg font-medium text-white mb-6 border-l-2 border-cyan-500 pl-3">State-of-the-Art Benchmarks (OAI Internal)</h4>
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/50">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/50 shadow-xl">
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.02]">
@@ -351,7 +375,7 @@ export default function AcademicProjectPage() {
           {/* Table 4: Ablation */}
           <div>
             <h4 className="text-lg font-medium text-white mb-6 border-l-2 border-indigo-500 pl-3">Ablation Studies</h4>
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/50">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/50 shadow-xl">
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.02]">
@@ -383,29 +407,18 @@ export default function AcademicProjectPage() {
 
           <div className="space-y-16">
             
-            {/* Confusion Matrices (Fig 9a & 9b) */}
+            {/* Confusion Matrix (Fig 9 - Optimized Layout) */}
             <div>
               <h4 className="text-lg font-medium text-white mb-4">Confusion Matrix Analysis</h4>
-              <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+              <p className="text-sm text-zinc-400 leading-relaxed mb-8">
                 Unlike nominal classification models that produce extreme misclassifications, AGE-Net's predictions strictly gather along the primary diagonal. Errors are exclusively confined to adjacent grades, confirming ordinal efficacy.
               </p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-2 relative overflow-hidden">
-                  <img 
-                    src="/fig9a.jpg" 
-                    alt="Confusion Matrix OAI" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: /fig9a.jpg]%3C/text%3E%3C/svg%3E" }}
-                  />
-                </div>
-                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-2 relative overflow-hidden">
-                  <img 
-                    src="/fig9b.jpg" 
-                    alt="Confusion Matrix NHANES" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: /fig9b.jpg]%3C/text%3E%3C/svg%3E" }}
-                  />
-                </div>
+              <div className="w-full max-w-3xl mx-auto aspect-square md:aspect-video bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 md:p-8 relative overflow-hidden group hover:border-white/20 transition-all shadow-xl">
+                 <ImageWithFallback 
+                    src="/fig09_confusion.jpeg" 
+                    alt="Figure 9 Confusion Matrix" 
+                    className="w-full h-full object-contain" 
+                 />
               </div>
             </div>
 
@@ -416,38 +429,44 @@ export default function AcademicProjectPage() {
                 The model's focal attention shifts and clusters at critical pathological sites, notably joint space narrowing (JSN), demonstrating spatial overlap with physician annotations.
               </p>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-2 relative overflow-hidden">
-                  <img 
-                    src="/fig10.jpg" 
-                    alt="Figure 10 GradCAM" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: /fig10.jpg]%3C/text%3E%3C/svg%3E" }}
+                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <ImageWithFallback 
+                     src="/fig10_gradcam.jpeg" 
+                     alt="Figure 10 GradCAM" 
+                     className="w-full h-full object-contain" 
                   />
                 </div>
-                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-2 relative overflow-hidden">
-                  <img 
-                    src="/fig11.jpg" 
-                    alt="Figure 11 CAM Evolution" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='12' text-anchor='middle' dominant-baseline='middle'%3E[Missing: /fig11.jpg]%3C/text%3E%3C/svg%3E" }}
+                <div className="aspect-square bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                  <ImageWithFallback 
+                     src="/fig11_cam.jpeg" 
+                     alt="Figure 11 CAM Evolution" 
+                     className="w-full h-full object-contain" 
                   />
                 </div>
               </div>
             </div>
 
-            {/* Uncertainty (Fig 12 & 13) */}
+            {/* Uncertainty & Robustness (Fig 12 & 13) */}
             <div>
               <h4 className="text-lg font-medium text-white mb-4">Evidential Uncertainty & Reliability</h4>
               <p className="text-sm text-zinc-400 leading-relaxed mb-6">
                 Higher estimated uncertainty is consistently associated with larger absolute error. AGE-Net also maintains robust stability under synthetic perturbations (Noise, Brightness, Occlusion).
               </p>
-              <div className="w-full aspect-video md:aspect-[21/9] bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 relative overflow-hidden">
-                <img 
-                  src="/fig12.jpg" 
-                  alt="Figure 12 & 13 Uncertainty and Perturbations" 
-                  className="w-full h-full object-contain"
-                  onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23050505'/%3E%3Ctext x='50%25' y='50%25' fill='%2352525b' font-family='monospace' font-size='14' text-anchor='middle' dominant-baseline='middle'%3E[Missing: /fig12.jpg]%3C/text%3E%3C/svg%3E" }}
-                />
+              <div className="grid md:grid-cols-2 gap-6">
+                 <div className="aspect-[4/3] bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                    <ImageWithFallback 
+                       src="/fig12_uncertainty.jpeg" 
+                       alt="Figure 12 Uncertainty" 
+                       className="w-full h-full object-contain" 
+                    />
+                 </div>
+                 <div className="aspect-[4/3] bg-[#050505] rounded-xl border border-white/10 flex items-center justify-center p-4 relative overflow-hidden group hover:border-white/20 transition-all shadow-lg">
+                    <ImageWithFallback 
+                       src="/fig13_robust.jpeg" 
+                       alt="Figure 13 Robustness" 
+                       className="w-full h-full object-contain" 
+                    />
+                 </div>
               </div>
             </div>
 
